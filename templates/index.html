@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Booking Market Demand Analytics</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .chart-container { margin-bottom: 2rem; }
+        .insights-box {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        .filter-section {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        .mock-data-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <h1 class="text-center mb-4">Airline Booking Market Demand Analytics</h1>
+        
+        {% if using_mock_data %}
+        <div class="mock-data-warning">
+            <strong>Note:</strong> Currently displaying simulated data as the Amadeus API connection is unavailable. 
+            The visualizations and analysis are based on mock data for demonstration purposes.
+        </div>
+        {% endif %}
+        
+        <!-- Filters -->
+        <div class="filter-section">
+            <form method="post" class="row g-3">
+                <div class="col-md-3">
+                    <label for="origin" class="form-label">Origin</label>
+                    <select name="origin" id="origin" class="form-select">
+                        <option value="All">All Cities</option>
+                        {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="destination" class="form-label">Destination</label>
+                    <select name="destination" id="destination" class="form-select">
+                        <option value="All">All Cities</option>
+                        {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="date_from" class="form-label">From Date</label>
+                    <input type="date" name="date_from" id="date_from" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label for="date_to" class="form-label">To Date</label>
+                    <input type="date" name="date_to" id="date_to" class="form-control">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Update Analysis</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- AI Insights -->
+        {% if insights %}
+        <div class="insights-box">
+            <h3>AI Market Analysis</h3>
+            <p>{{ insights }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Charts -->
+        <div class="row">
+            <div class="col-md-6 chart-container">
+                <div id="routes_chart"></div>
+            </div>
+            <div class="col-md-6 chart-container">
+                <div id="prices_chart"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 chart-container">
+                <div id="demand_chart"></div>
+            </div>
+            <div class="col-md-6 chart-container">
+                <div id="heatmap_chart"></div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <h3>Detailed Data</h3>
+                <div class="table-responsive">
+                    {{ data | safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if charts %}
+                {% for name, chartJSON in charts.items() %}
+                    var {{ name }}_data = {{ chartJSON | safe }};
+                    Plotly.newPlot('{{ name }}_chart', {{ name }}_data.data, {{ name }}_data.layout);
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+</body>
+</html> 

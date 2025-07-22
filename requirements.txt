@@ -1,0 +1,11 @@
+Flask
+requests
+pandas
+plotly
+numpy
+beautifulsoup4
+openai
+python-dotenv
+amadeus
+scikit-learn
+forex-python 
